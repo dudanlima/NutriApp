@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // --- SUA PALETA TERRACOTA & VINHO ---
-  static const Color fundo = Color(0xFFEEE4DA);          // Linho Claro (#EEE4DA)
-  static const Color champanhe = Color(0xFFD8C4AC);      // Castanho Suave (#D8C4AC)
-  static const Color roseGold = Color(0xFFC8A49F);       // Rosé Terroso (#C8A49F)
-  static const Color roseEscuro = Color(0xFF4D0E13);     // Vinho Profundo (#4D0E13)
+  // --- SUAS CORES ATUAIS (E o fundo Vanilla elegante) ---
+  static const Color roseGold = Color(0xFFC6A15A); 
+  static const Color champanhe = Color(0xFFF4EAD4);
+  static const Color fundo = Color(0xFFFDFBF7); 
+  static const Color textoEscuro = Color(0xFF2A2A2A);
 
-  // Cores de Texto
-  static const Color textoPrincipal = Color(0xFF4D0E13); 
-  static const Color textoSuave = Color(0xFF6E5D53);     
-
-  // --- CORES DE FEEDBACK (O que estava faltando!) ---
-  static const Color sucesso = Color(0xFF2E5A44);         // Verde oliva fechado
-  static const Color erro = Color(0xFF4D0E13);            // Vinho profundo
-  static const Color alerta = Color(0xFFD8C4AC);          // Castanho suave da sua paleta
-  static const Color info = Color(0xFFC8A49F);            // Rosé da sua paleta
+  // --- DICIONÁRIO DE COMPATIBILIDADE (Para zerar TODOS os erros do app) ---
+  static const Color textoPrincipal = Color(0xFF2A2A2A); 
+  static const Color textoSuave = Color(0xFF666666);     
+  static const Color sucesso = Color(0xFF2E7D32); // Verde para sucesso
+  static const Color roseEscuro = Color(0xFF8C6D31); 
+  
+  // As duas últimas pecinhas do quebra-cabeça:
+  static const Color alerta = Color(0xFFEF6C00);  // Laranja elegante para avisos
+  static const Color erro = Color(0xFFD32F2F);    // Vermelho padrão para erros
 }

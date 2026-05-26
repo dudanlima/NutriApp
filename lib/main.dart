@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart'; // Importação necessária para o Firebase
-import 'firebase_options.dart'; // Importação do arquivo de configuração que geramos
+import 'package:firebase_core/firebase_core.dart'; 
+import 'firebase_options.dart'; 
 import 'package:nutri_app/theme/app_colors.dart'; 
 import 'package:nutri_app/screens/auth/login_screen.dart'; 
+import 'package:google_fonts/google_fonts.dart'; 
 
 void main() async {
-  // Garante que os plugins do Flutter estejam prontos antes de iniciar o Firebase
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Inicializa o Firebase com as configurações oficiais do seu projeto
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  
   runApp(const NutriApp());
 }
 
@@ -24,35 +21,60 @@ class NutriApp extends StatelessWidget {
     return MaterialApp(
       title: 'NutriApp Pro',
       debugShowCheckedModeBanner: false,
+      
+      // Força o aplicativo a ignorar o modo escuro do celular
+      themeMode: ThemeMode.light, 
+
       theme: ThemeData(
         useMaterial3: true,
+        brightness: Brightness.light,
         
-        // Define a Nice Paper como a fonte padrão para todos os textos comuns, inputs e botões
-        fontFamily: 'NicePaper',
+        // 1. CONFIGURAÇÃO DOS TEXTOS DO CORPO (Fundo Vanilla)
+        // Todos os textos normais do app vão usar a fonte Inter e serão escuros
+        textTheme: GoogleFonts.interTextTheme(
+          Theme.of(context).textTheme,
+        ).copyWith(
+          displayLarge: GoogleFonts.poppins(fontWeight: FontWeight.w600, color: AppColors.textoEscuro),
+          displayMedium: GoogleFonts.poppins(fontWeight: FontWeight.w600, color: AppColors.textoEscuro),
+          headlineLarge: GoogleFonts.poppins(fontWeight: FontWeight.w600, color: AppColors.textoEscuro),
+          titleLarge: GoogleFonts.poppins(fontWeight: FontWeight.w500, color: AppColors.textoEscuro),
+          titleMedium: GoogleFonts.poppins(fontWeight: FontWeight.w500, color: AppColors.textoEscuro),
+          titleSmall: GoogleFonts.poppins(fontWeight: FontWeight.w500, color: AppColors.textoEscuro),
+        ),
+
+        // 2. CONFIGURAÇÃO DOS TEXTOS DO CABEÇALHO (Fundo Amarelo/Dourado)
+        // Aqui nós forçamos qualquer texto que fique dentro do topo/appbar a usar Poppins Branca
+        primaryTextTheme: GoogleFonts.poppinsTextTheme().copyWith(
+          headlineMedium: const TextStyle(color: Colors.white),
+          titleLarge: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+          bodyLarge: const TextStyle(color: Colors.white70),
+          bodyMedium: const TextStyle(color: Colors.white70),
+        ),
+
+        // Garante que a barra superior e os ícones dela fiquem brancos puro
+        appBarTheme: AppBarTheme(
+          backgroundColor: AppColors.roseGold,
+          foregroundColor: Colors.white, 
+          elevation: 0,
+          titleTextStyle: GoogleFonts.poppins(
+            fontWeight: FontWeight.w500,
+            fontSize: 20,
+            color: Colors.white, 
+          ),
+        ),
 
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppColors.roseGold,
           primary: AppColors.roseGold,
           surface: AppColors.fundo,
+          brightness: Brightness.light,
         ),
-        scaffoldBackgroundColor: AppColors.fundo,
+        
+        scaffoldBackgroundColor: AppColors.fundo, 
         
         drawerTheme: const DrawerThemeData(
           backgroundColor: AppColors.champanhe,
           surfaceTintColor: Colors.transparent,
-        ),
-
-        // Configuração detalhada das três fontes novas do DaFont por tamanhos
-        textTheme: const TextTheme(
-          // Títulos grandes e principais de destaque (Boas-vindas, títulos de páginas)
-          displayLarge: TextStyle(fontFamily: 'FunkyGlitz'),
-          displayMedium: TextStyle(fontFamily: 'FunkyGlitz'),
-          headlineLarge: TextStyle(fontFamily: 'FunkyGlitz'),
-          
-          // Títulos médios de seções e cartões principais
-          titleLarge: TextStyle(fontFamily: 'BrightMiracle', fontSize: 24, fontWeight: FontWeight.normal),
-          titleMedium: TextStyle(fontFamily: 'BrightMiracle', fontSize: 20, fontWeight: FontWeight.normal),
-          titleSmall: TextStyle(fontFamily: 'BrightMiracle', fontSize: 16, fontWeight: FontWeight.normal),
         ),
 
         elevatedButtonTheme: ElevatedButtonThemeData(
@@ -60,8 +82,7 @@ class NutriApp extends StatelessWidget {
             backgroundColor: AppColors.roseGold,
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            // Garante a fonte NicePaper no texto de dentro de todos os botões
-            textStyle: const TextStyle(fontFamily: 'NicePaper', fontSize: 16),
+            textStyle: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 16),
           ),
         ),
       ),
