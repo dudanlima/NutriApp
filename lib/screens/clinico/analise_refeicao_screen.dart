@@ -52,12 +52,15 @@ class _AnaliseRefeicaoScreenState extends State<AnaliseRefeicaoScreen> {
         'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$_apiKey',
       );
 
-      // CORREÇÃO AQUI: Remove todas as quebras de linha invisíveis do base64 para evitar rejeição da API na Web
-      final imagemBase64 = base64.encode(_fotoBytes!).replaceAll('\n', '').replaceAll('\r', '');
+      // Limpa perfeitamente o base64 removendo quebras de linha para a API aceitar na web
+      final imagemBase64 = base64.encode(_fotoBytes!).replaceAll(RegExp(r'[\r\n]'), '');
 
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
         body: jsonEncode({
           'contents': [
             {
@@ -91,13 +94,12 @@ class _AnaliseRefeicaoScreenState extends State<AnaliseRefeicaoScreen> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final texto =
-            data['candidates'][0]['content']['parts'][0]['text'] as String;
+        final texto = data['candidates'][0]['content']['parts'][0]['text'] as String;
         setState(() {
           _resultado = texto.replaceAll('*', '').trim();
         });
       } else {
-        debugPrint("Erro na API do Gemini: ${response.statusCode} - ${response.body}");
+        debugPrint("Erro Gemini: ${response.statusCode} - ${response.body}");
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Falha na análise. Tente novamente.'),
@@ -107,7 +109,7 @@ class _AnaliseRefeicaoScreenState extends State<AnaliseRefeicaoScreen> {
       }
     } catch (e) {
       if (!mounted) return;
-      debugPrint("Erro de conexão na análise: $e");
+      debugPrint("Erro de conexão: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Erro de conexão. Verifique sua internet.'),
