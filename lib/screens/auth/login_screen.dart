@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Importação do banco de dados
+import 'package:cloud_firestore/cloud_firestore.dart'; 
+import 'package:nutri_app/theme/app_colors.dart'; // Importando seu arquivo de cores centralizado
 import 'register_screen.dart'; 
 import '../paciente/home_screen.dart';
 import 'nutri_login_screen.dart';
@@ -40,7 +41,6 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (mounted) {
-        // Busca o nome real do paciente no banco de dados
         var userDoc = await FirebaseFirestore.instance
             .collection('usuarios')
             .doc(userCredential.user!.uid)
@@ -99,42 +99,52 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFDFBF9),
+      // MUDANÇA: Agora usa o fundo vanilla/off-white da sua paleta centralizada
+      backgroundColor: AppColors.fundo,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(40),
           child: Column(
             children: [
-              const Icon(Icons.spa_outlined, size: 80, color: Color(0xFFB76E79)),
+              // MUDANÇA: Ícone usa o tom principal da paleta (roseGold)
+              Icon(Icons.spa_outlined, size: 80, color: AppColors.roseGold),
               const SizedBox(height: 20),
-              const Text(
+              Text(
                 "BEM-VINDA",
-                style: TextStyle(letterSpacing: 3, fontSize: 10, color: Color(0xFF8D7A71)),
+                // MUDANÇA: Texto adaptado para o tom escuro sutil (textoEscuro)
+                style: TextStyle(letterSpacing: 3, fontSize: 10, color: AppColors.textoSuave),
               ),
-              const Text(
+              Text(
                 "Acesso do Paciente",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w300, color: Color(0xFF4A3B37)),
+                // MUDANÇA: Título principal usando a cor escura da paleta
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w300, color: AppColors.textoEscuro),
               ),
               const SizedBox(height: 40),
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(labelText: "E-mail cadastrado"),
+                textInputAction: TextInputAction.next,
               ),
               const SizedBox(height: 20),
               TextField(
                 controller: _senhaController,
                 obscureText: true,
                 decoration: const InputDecoration(labelText: "Senha"),
+                textInputAction: TextInputAction.done,
+                onSubmitted: (value) {
+                  _tentarLogin();
+                },
               ),
               const SizedBox(height: 40),
               
               _carregando 
-                ? const CircularProgressIndicator(color: Color(0xFFB76E79))
+                ? CircularProgressIndicator(color: AppColors.roseGold)
                 : ElevatedButton(
                     onPressed: _tentarLogin,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFB76E79),
+                      // MUDANÇA: Botão segue a cor principal do tema
+                      backgroundColor: AppColors.roseGold,
                       foregroundColor: Colors.white,
                       minimumSize: const Size(double.infinity, 55),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -151,9 +161,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     MaterialPageRoute(builder: (context) => const RegisterScreen()),
                   );
                 },
-                child: const Text(
+                child: Text(
                   "Não tem uma conta? Cadastre-se aqui",
-                  style: TextStyle(color: Color(0xFF8D7A71), fontSize: 14),
+                  style: TextStyle(color: AppColors.textoSuave, fontSize: 14),
                 ),
               ),
 
@@ -163,7 +173,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => const NutriLoginScreen()));
                 },
-                child: const Text("Acesso Nutricionista", style: TextStyle(color: Color(0xFFB76E79), fontSize: 12)),
+                child: Text(
+                  "Acesso Nutricionista", 
+                  style: TextStyle(color: AppColors.roseGold, fontSize: 12),
+                ),
               ),
             ],
           ),
