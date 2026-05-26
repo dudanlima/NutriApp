@@ -35,7 +35,7 @@ class _AnaliseRotuloScreenState extends State<AnaliseRotuloScreen> {
     if (_fotoBytes == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Tire uma foto do rotulo primeiro.'),
+          content: Text('Tire uma foto do rótulo primeiro.'),
           backgroundColor: AppColors.roseGold,
         ),
       );
@@ -52,7 +52,8 @@ class _AnaliseRotuloScreenState extends State<AnaliseRotuloScreen> {
         'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$_apiKey',
       );
 
-      final imagemBase64 = base64Encode(_fotoBytes!);
+      // CORREÇÃO AQUI: Remove as quebras de linha invisíveis do base64 para evitar rejeição da API
+      final imagemBase64 = base64.encode(_fotoBytes!).replaceAll('\n', '').replaceAll('\r', '');
 
       final response = await http.post(
         url,
@@ -62,12 +63,12 @@ class _AnaliseRotuloScreenState extends State<AnaliseRotuloScreen> {
             {
               'parts': [
                 {
-                  'text': 'Voce e uma nutricionista analisando um rotulo de produto. '
+                  'text': 'Você é uma nutricionista analisando um rótulo de produto. '
                       'Seja direta e curta. Responda neste formato exato:\n\n'
                       'Produto: [nome do produto identificado]\n\n'
-                      'Veredicto: [Encaixa bem no plano / Encaixa com moderacao / Nao encaixa no plano]\n\n'
-                      'Por que: [uma frase curta explicando o motivo]\n\n'
-                      'Substituicao: [sugira um produto ou alternativa de marca especifica com melhor custo-beneficio e que se encaixe melhor no plano alimentar]'
+                      'Veredicto: [Encaixa bem no plano / Encaixa com moderação / Não encaixa no plano]\n\n'
+                      'Por quê: [uma frase curta explicando o motivo]\n\n'
+                      'Substituição: [sugira um produto ou alternativa de marca específica com melhor custo-benefício e que se encaixe melhor no plano alimentar]'
                 },
                 {
                   'inline_data': {
@@ -91,18 +92,20 @@ class _AnaliseRotuloScreenState extends State<AnaliseRotuloScreen> {
           _resultado = texto.replaceAll('*', '').trim();
         });
       } else {
+        debugPrint("Erro na API do Gemini (Rótulo): ${response.statusCode} - ${response.body}");
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Falha na analise. Tente novamente.'),
+            content: Text('Falha na análise. Tente novamente.'),
             backgroundColor: AppColors.erro,
           ),
         );
       }
     } catch (e) {
       if (!mounted) return;
+      debugPrint("Erro de conexão na análise do rótulo: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Erro de conexao. Verifique sua internet.'),
+          content: Text('Erro de conexão. Verifique sua internet.'),
           backgroundColor: AppColors.erro,
         ),
       );
@@ -117,7 +120,7 @@ class _AnaliseRotuloScreenState extends State<AnaliseRotuloScreen> {
       backgroundColor: AppColors.fundo,
       appBar: AppBar(
         title: const Text(
-          'ANALISE DE ROTULO',
+          'ANÁLISE DE RÓTULO',
           style: TextStyle(
               fontSize: 12,
               letterSpacing: 2,
@@ -152,7 +155,7 @@ class _AnaliseRotuloScreenState extends State<AnaliseRotuloScreen> {
                           Icon(Icons.camera_alt_outlined,
                               size: 60, color: AppColors.roseGold),
                           SizedBox(height: 15),
-                          Text("Toque para fotografar o rotulo",
+                          Text("Toque para fotografar o rótulo",
                               style: TextStyle(color: AppColors.textoSuave)),
                         ],
                       ),
@@ -176,11 +179,12 @@ class _AnaliseRotuloScreenState extends State<AnaliseRotuloScreen> {
                       child: CircularProgressIndicator(
                           color: Colors.white, strokeWidth: 2),
                     )
-                  : const Text('ANALISAR ROTULO'),
+                  : const Text('ANALISAR RÓTULO'),
             ),
             if (_resultado.isNotEmpty) ...[
               const SizedBox(height: 30),
               Container(
+                width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: Colors.white,

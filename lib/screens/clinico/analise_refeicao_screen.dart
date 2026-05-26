@@ -35,7 +35,7 @@ class _AnaliseRefeicaoScreenState extends State<AnaliseRefeicaoScreen> {
     if (_fotoBytes == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Selecione uma foto da refeicao primeiro.'),
+          content: Text('Selecione uma foto da refeição primeiro.'),
           backgroundColor: AppColors.roseGold,
         ),
       );
@@ -52,7 +52,8 @@ class _AnaliseRefeicaoScreenState extends State<AnaliseRefeicaoScreen> {
         'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$_apiKey',
       );
 
-      final imagemBase64 = base64Encode(_fotoBytes!);
+      // CORREÇÃO AQUI: Remove todas as quebras de linha invisíveis do base64 para evitar rejeição da API na Web
+      final imagemBase64 = base64.encode(_fotoBytes!).replaceAll('\n', '').replaceAll('\r', '');
 
       final response = await http.post(
         url,
@@ -62,17 +63,17 @@ class _AnaliseRefeicaoScreenState extends State<AnaliseRefeicaoScreen> {
             {
               'parts': [
                 {
-                  'text': 'Voce e uma nutricionista analisando uma foto de refeicao. '
-                      'Identifique os alimentos visiveis e estime os valores nutricionais aproximados da refeicao completa. '
+                  'text': 'Você é uma nutricionista analisando uma foto de refeição. '
+                      'Identifique os alimentos visíveis e estime os valores nutricionais aproximados da refeição completa. '
                       'Responda neste formato exato, sem nenhum texto adicional:\n\n'
                       'Alimentos identificados: [liste os alimentos]\n\n'
                       'Estimativa nutricional:\n'
                       'Calorias: [valor] kcal\n'
-                      'Proteinas: [valor] g\n'
+                      'Proteínas: [valor] g\n'
                       'Carboidratos: [valor] g\n'
                       'Gorduras: [valor] g\n'
                       'Fibras: [valor] g\n\n'
-                      'Observacao: [uma frase curta e direta sobre o equilibrio do prato]'
+                      'Observação: [uma frase curta e direta sobre o equilíbrio do prato]'
                 },
                 {
                   'inline_data': {
@@ -96,18 +97,20 @@ class _AnaliseRefeicaoScreenState extends State<AnaliseRefeicaoScreen> {
           _resultado = texto.replaceAll('*', '').trim();
         });
       } else {
+        debugPrint("Erro na API do Gemini: ${response.statusCode} - ${response.body}");
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Falha na analise. Tente novamente.'),
+            content: Text('Falha na análise. Tente novamente.'),
             backgroundColor: AppColors.erro,
           ),
         );
       }
     } catch (e) {
       if (!mounted) return;
+      debugPrint("Erro de conexão na análise: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Erro de conexao. Verifique sua internet.'),
+          content: Text('Erro de conexão. Verifique sua internet.'),
           backgroundColor: AppColors.erro,
         ),
       );
@@ -122,7 +125,7 @@ class _AnaliseRefeicaoScreenState extends State<AnaliseRefeicaoScreen> {
       backgroundColor: AppColors.fundo,
       appBar: AppBar(
         title: const Text(
-          'ANALISE DE REFEICAO',
+          'ANÁLISE DE REFEIÇÃO',
           style: TextStyle(
               fontSize: 12,
               letterSpacing: 2,
@@ -186,6 +189,7 @@ class _AnaliseRefeicaoScreenState extends State<AnaliseRefeicaoScreen> {
             if (_resultado.isNotEmpty) ...[
               const SizedBox(height: 30),
               Container(
+                width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: Colors.white,
