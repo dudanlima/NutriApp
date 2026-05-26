@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // --- SUAS CORES ATUAIS (E o fundo Vanilla elegante) ---
-  static const Color roseGold = Color(0xFFC6A15A); 
-  static const Color champanhe = Color(0xFFF4EAD4);
-  static const Color fundo = Color(0xFFFDFBF7); 
-  static const Color textoEscuro = Color(0xFF2A2A2A);
+  // --- A SUA PALETA REAL (Nude, Areia e Taupe Sofisticado) ---
+  static const Color roseGold = Color(0xFFD7C4B7); // O nude/bege principal do topo e botões
+  static const Color champanhe = Color(0xFFEFE7E1); // O tom areia bem clarinho para detalhes e menus
+  static const Color fundo = Color(0xFFFAF6F3);     // O fundo vanilla/off-white ultra limpo da imagem
+  static const Color textoEscuro = Color(0xFF4A433E); // O marrom taupe elegante para os textos principais
 
-  // --- DICIONÁRIO DE COMPATIBILIDADE (Para zerar TODOS os erros do app) ---
-  static const Color textoPrincipal = Color(0xFF2A2A2A); 
-  static const Color textoSuave = Color(0xFF666666);     
-  static const Color sucesso = Color(0xFF2E7D32); // Verde para sucesso
-  static const Color roseEscuro = Color(0xFF8C6D31); 
-  
-  // As duas últimas pecinhas do quebra-cabeça:
-  static const Color alerta = Color(0xFFEF6C00);  // Laranja elegante para avisos
-  static const Color erro = Color(0xFFD32F2F);    // Vermelho padrão para erros
+  // --- DICIONÁRIO DE COMPATIBILIDADE (Para manter os erros zerados) ---
+  static const Color textoPrincipal = Color(0xFF4A433E); 
+  static const Color textoSuave = Color(0xFF8A7F77);     
+  static const Color sucesso = Color(0xFF5A6E5D); // Verde oliva bem sutil que combina com a paleta
+  static const Color roseEscuro = Color(0xFFB5A194); // Versão mais profunda do nude para realces antigos
+  static const Color alerta = Color(0xFFC48B69);  
+  static const Color erro = Color(0xFF9E5A5A);    
 }
