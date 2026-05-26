@@ -15,10 +15,10 @@ dependencies:
   shared_preferences: ^2.2.2
   fl_chart: ^0.66.0
 
-  # --- PACOTES REAJUSTADOS PARA COMPATIBILIDADE COM O GITHUB ---
-  firebase_core: 2.24.0
-  firebase_auth: 4.16.0
-  cloud_firestore: 4.14.0
+  # --- VERSÕES AJUSTADAS EM HARMONIA COM O SERVER DO GITHUB ---
+  firebase_core: ^2.32.0       # Versão recomendada explicitamente pelo log do erro!
+  firebase_auth: ^4.16.0
+  cloud_firestore: ^4.14.0
   google_fonts: ^6.1.0
   brasil_fields: ^1.14.0
   image_picker: ^1.0.7
