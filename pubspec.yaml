@@ -4,28 +4,46 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.11.0 <4.0.0'
+  sdk: '>=3.2.3 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.6
-  image_picker: ^1.2.2
-  google_generative_ai: ^0.4.7
-  google_fonts: ^6.2.1
-  firebase_core: ^4.7.0
-  firebase_auth: ^6.4.0
-  cloud_firestore: ^6.3.0
-  brasil_fields: ^1.19.0
-  http: ^1.2.0
+  cupertino_icons: ^1.0.2
+  http: ^1.1.0
+  intl: ^0.18.1
+  shared_preferences: ^2.2.2
+  fl_chart: ^0.66.0
+
+  # --- PACOTES DO SISTEMA (Para limpar todos os 40+ erros!) ---
+  firebase_core: ^2.24.0
+  firebase_auth: ^4.16.0
+  cloud_firestore: ^4.14.0
+  google_fonts: ^6.1.0
+  brasil_fields: ^1.14.0       # Resolve o erro do CpfInputFormatter
+  image_picker: ^1.0.7         # Resolve o erro da câmera e galeria
+  google_generative_ai: ^0.2.0 # Resolve o erro da Inteligência Artificial!
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^3.0.0
 
 flutter:
   uses-material-design: true
 
   assets:
-    - assets/brasao.png
+    - assets/
+
+  fonts:
+    - family: FunkyGlitz
+      fonts:
+        - asset: assets/fonts/funky_glitz.ttf
+
+    - family: BrightMiracle
+      fonts:
+        - asset: assets/fonts/bright_miracle.ttf
+
+    - family: NicePaper
+      fonts:
+        - asset: assets/fonts/nice_paper.ttf
