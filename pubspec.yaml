@@ -15,14 +15,14 @@ dependencies:
   shared_preferences: ^2.2.2
   fl_chart: ^0.66.0
 
-  # --- PACOTES DO SISTEMA (Para limpar todos os 40+ erros!) ---
-  firebase_core: ^2.24.0
-  firebase_auth: ^4.16.0
-  cloud_firestore: ^4.14.0
+  # --- PACOTES REAJUSTADOS PARA COMPATIBILIDADE COM O GITHUB ---
+  firebase_core: 2.24.0
+  firebase_auth: 4.16.0
+  cloud_firestore: 4.14.0
   google_fonts: ^6.1.0
-  brasil_fields: ^1.14.0       # Resolve o erro do CpfInputFormatter
-  image_picker: ^1.0.7         # Resolve o erro da câmera e galeria
-  google_generative_ai: ^0.2.0 # Resolve o erro da Inteligência Artificial!
+  brasil_fields: ^1.14.0
+  image_picker: ^1.0.7
+  google_generative_ai: ^0.2.0
 
 dev_dependencies:
   flutter_test:
