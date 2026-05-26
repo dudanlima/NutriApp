@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../theme/app_colors.dart';
 import 'dieta_screen.dart';
 import 'compras_screen.dart';
-import 'evolucao_paciente_screen.dart'; // tela correta do paciente
+import 'evolucao_paciente_screen.dart'; 
 import '../clinico/analise_rotulo_screen.dart';
 import '../clinico/analise_refeicao_screen.dart';
 import 'perfil_screen.dart';
@@ -24,9 +26,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String get _primeiroNome {
-    final partes = widget.nomeCompleto.trim().split(' ');
-    return partes.isNotEmpty ? partes[0] : "Ola";
+  // Retorna o primeiro nome baseado no que está salvo no banco de dados
+  String _obterPrimeiroNome(String nomeCompleto) {
+    final partes = nomeCompleto.trim().split(' ');
+    return partes.isNotEmpty ? partes[0] : "Olá";
   }
 
   String get _saudacao {
@@ -38,97 +41,118 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: AppColors.fundo,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: const Text(""),
-        centerTitle: true,
-        iconTheme: const IconThemeData(color: AppColors.roseEscuro),
-      ),
-      drawer: _buildMenuLateral(context),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: kToolbarHeight + 40),
+    final usuarioAtual = FirebaseAuth.instance.currentUser;
 
-              Text(
-                _saudacao.toUpperCase(),
-                style: const TextStyle(
-                    fontSize: 10,
-                    letterSpacing: 2,
-                    color: AppColors.textoSuave),
-              ),
-              Text(
-                _primeiroNome,
-                style: const TextStyle(
-                    fontSize: 34,
-                    fontWeight: FontWeight.w300,
-                    color: AppColors.roseEscuro),
-              ),
+    // Usamos o StreamBuilder para escutar as mudanças do Firestore em tempo real
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(usuarioAtual?.uid)
+          .snapshots(),
+      builder: (context, snapshot) {
+        // Se o banco ainda não respondeu, mantém o nome que veio do login provisoriamente
+        String nomeExibicao = widget.nomeCompleto;
 
-              const SizedBox(height: 40),
+        if (snapshot.hasData && snapshot.data!.exists) {
+          final dados = snapshot.data!.data() as Map<String, dynamic>?;
+          if (dados != null && dados.containsKey('nome')) {
+            nomeExibicao = dados['nome'];
+          }
+        }
 
-              const Text(
-                "FERRAMENTAS E PLANO",
-                style: TextStyle(
-                    fontSize: 10,
-                    letterSpacing: 2,
-                    color: AppColors.textoSuave),
-              ),
-              const SizedBox(height: 20),
-
-              Wrap(
-                spacing: 15,
-                runSpacing: 15,
-                alignment: WrapAlignment.center,
+        return Scaffold(
+          extendBodyBehindAppBar: true,
+          backgroundColor: AppColors.fundo,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            title: const Text(""),
+            centerTitle: true,
+            iconTheme: const IconThemeData(color: AppColors.roseEscuro),
+          ),
+          drawer: _buildMenuLateral(context, nomeExibicao),
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildCard(context, "SCANNER REFEICAO",
-                      Icons.camera_alt_outlined,
-                      const AnaliseRefeicaoScreen()),
-                  _buildCard(context, "SCANNER ROTULO",
-                      Icons.qr_code_scanner,
-                      const AnaliseRotuloScreen()),
-                  _buildCard(context, "MEU PLANO",
-                      Icons.restaurant_outlined,
-                      const DietaScreen()),
-                  _buildCard(context, "LISTA DE COMPRAS",
-                      Icons.shopping_bag_outlined,
-                      const ComprasScreen()),
-                  _buildCard(context, "EVOLUCAO",
-                      Icons.show_chart,
-                      const EvolucaoPacienteScreen()), // tela correta
-                  _buildCard(context, "EXAMES",
-                      Icons.assignment_outlined,
-                      const LaudoEvolutivoScreen()),
-                  _buildCard(context, "PERFIL",
-                      Icons.person_outline,
-                      const PerfilScreen()),
+                  const SizedBox(height: kToolbarHeight + 40),
+
+                  Text(
+                    _saudacao.toUpperCase(),
+                    style: const TextStyle(
+                        fontSize: 10,
+                        letterSpacing: 2,
+                        color: AppColors.textoSuave),
+                  ),
+                  Text(
+                    _obterPrimeiroNome(nomeExibicao),
+                    style: const TextStyle(
+                        fontSize: 34,
+                        fontWeight: FontWeight.w300,
+                        color: AppColors.roseEscuro),
+                  ),
+
+                  const SizedBox(height: 40),
+
+                  const Text(
+                    "FERRAMENTAS E PLANO",
+                    style: TextStyle(
+                        fontSize: 10,
+                        letterSpacing: 2,
+                        color: AppColors.textoSuave),
+                  ),
+                  const SizedBox(height: 20),
+
+                  Wrap(
+                    spacing: 15,
+                    runSpacing: 15,
+                    alignment: WrapAlignment.center,
+                    children: [
+                      _buildCard(context, "SCANNER REFEIÇÃO",
+                          Icons.camera_alt_outlined,
+                          const AnaliseRefeicaoScreen()),
+                      _buildCard(context, "SCANNER RÓTULO",
+                          Icons.qr_code_scanner,
+                          const AnaliseRotuloScreen()),
+                      _buildCard(context, "MEU PLANO",
+                          Icons.restaurant_outlined,
+                          const DietaScreen()),
+                      _buildCard(context, "LISTA DE COMPRAS",
+                          Icons.shopping_bag_outlined,
+                          const ComprasScreen()),
+                      _buildCard(context, "EVOLUÇÃO",
+                          Icons.show_chart,
+                          const EvolucaoPacienteScreen()), 
+                      _buildCard(context, "EXAMES",
+                          Icons.assignment_outlined,
+                          const LaudoEvolutivoScreen()),
+                      _buildCard(context, "PERFIL",
+                          Icons.person_outline,
+                          const PerfilScreen()),
+                    ],
+                  ),
+
+                  const SizedBox(height: 40),
+
+                  Center(
+                    child: Text(
+                      "by Eduarda Nogueira",
+                      style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        color: AppColors.roseEscuro.withValues(alpha: 0.5),
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
                 ],
               ),
-
-              const SizedBox(height: 40),
-
-              Center(
-                child: Text(
-                  "by Eduarda Nogueira",
-                  style: TextStyle(
-                    fontStyle: FontStyle.italic,
-                    color: AppColors.roseEscuro.withValues(alpha: 0.5),
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -172,7 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildMenuLateral(BuildContext context) {
+  Widget _buildMenuLateral(BuildContext context, String nomeRealtime) {
     return Drawer(
       child: Container(
         color: AppColors.fundo,
@@ -181,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
             UserAccountsDrawerHeader(
               decoration: const BoxDecoration(color: AppColors.roseEscuro),
               accountName: Text(
-                widget.nomeCompleto.toUpperCase(),
+                nomeRealtime.toUpperCase(),
                 style: const TextStyle(
                     letterSpacing: 1, fontWeight: FontWeight.w600),
               ),
@@ -189,7 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white24,
                 child: Text(
-                  widget.nomeCompleto
+                  nomeRealtime
                       .trim()
                       .split(' ')
                       .map((p) => p.isNotEmpty ? p[0] : '')
@@ -206,19 +230,19 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                  _itemMenu(context, Icons.home_outlined, "INICIO", null),
+                  _itemMenu(context, Icons.home_outlined, "INÍCIO", null),
                   _itemMenu(context, Icons.camera_alt_outlined,
-                      "SCANNER DE REFEICAO",
+                      "SCANNER DE REFEIÇÃO",
                       const AnaliseRefeicaoScreen()),
                   _itemMenu(context, Icons.qr_code_scanner,
-                      "SCANNER DE ROTULO",
+                      "SCANNER DE RÓTULO",
                       const AnaliseRotuloScreen()),
                   _itemMenu(context, Icons.restaurant_outlined, "MEU PLANO",
                       const DietaScreen()),
                   _itemMenu(context, Icons.shopping_bag_outlined,
                       "LISTA DE COMPRAS",
                       const ComprasScreen()),
-                  _itemMenu(context, Icons.show_chart, "EVOLUCAO",
+                  _itemMenu(context, Icons.show_chart, "EVOLUÇÃO",
                       const EvolucaoPacienteScreen()),
                   _itemMenu(context, Icons.assignment_outlined, "EXAMES",
                       const LaudoEvolutivoScreen()),
@@ -258,9 +282,10 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       onTap: () {
         Navigator.pop(context);
-        if (tela != null)
+        if (tela != null) {
           Navigator.push(
               context, MaterialPageRoute(builder: (c) => tela));
+        }
       },
     );
   }
