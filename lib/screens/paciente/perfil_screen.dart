@@ -51,19 +51,22 @@ class _PerfilScreenState extends State<PerfilScreen> {
     if (usuarioAtual != null) {
       setState(() => _carregando = true);
       try {
+        // Correção aplicada aqui: alterado de .update para .set com merge para garantir a criação do registro
         await FirebaseFirestore.instance
             .collection('usuarios')
             .doc(usuarioAtual.uid)
-            .update({
+            .set({
           'nome': _nomeController.text.trim(),
           'objetivo': _objetivoController.text.trim(),
-        });
+        }, SetOptions(merge: true));
+        
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Perfil atualizado com sucesso!"), backgroundColor: Colors.green),
           );
         }
       } catch (e) {
+        debugPrint("Erro detalhado do Firestore: $e");
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Erro ao salvar."), backgroundColor: Colors.redAccent),
@@ -83,8 +86,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
       setState(() {
         _fotoBytes = bytes;
       });
-      // Nota: Para a foto ficar salva permanentemente na nuvem, 
-      // configuraremos o Firebase Storage no futuro.
     }
   }
 
@@ -113,7 +114,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                
                 GestureDetector(
                   onTap: _escolherFoto,
                   child: Container(
