@@ -206,3 +206,4 @@ class _AnaliseRotuloScreenState extends State<AnaliseRotuloScreen> {
     );
   }
 }
+// Forçando build nova

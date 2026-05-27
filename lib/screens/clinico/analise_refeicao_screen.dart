@@ -211,3 +211,4 @@ class _AnaliseRefeicaoScreenState extends State<AnaliseRefeicaoScreen> {
     );
   }
 }
+// Forçando build nova
