@@ -13,7 +13,7 @@ class AnaliseRefeicaoScreen extends StatefulWidget {
 }
 
 class _AnaliseRefeicaoScreenState extends State<AnaliseRefeicaoScreen> {
-  static const String _apiKey = 'AIzaSyCXjIWyFRqSwQomeHR60yl2qakb0KhOLwo';
+  static const String _apiKey = 'AIzaSyBPvcqgt3SRMEyEr5IUoGTFnHpQLIIdIcs';
 
   bool _processando = false;
   String _resultado = "";
@@ -52,7 +52,6 @@ class _AnaliseRefeicaoScreenState extends State<AnaliseRefeicaoScreen> {
         'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$_apiKey',
       );
 
-      // Limpa perfeitamente o base64 removendo quebras de linha para a API aceitar na web
       final imagemBase64 = base64.encode(_fotoBytes!).replaceAll(RegExp(r'[\r\n]'), '');
 
       final response = await http.post(
@@ -99,7 +98,6 @@ class _AnaliseRefeicaoScreenState extends State<AnaliseRefeicaoScreen> {
           _resultado = texto.replaceAll('*', '').trim();
         });
       } else {
-        debugPrint("Erro Gemini: ${response.statusCode} - ${response.body}");
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Falha na análise. Tente novamente.'),
@@ -109,7 +107,6 @@ class _AnaliseRefeicaoScreenState extends State<AnaliseRefeicaoScreen> {
       }
     } catch (e) {
       if (!mounted) return;
-      debugPrint("Erro de conexão: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Erro de conexão. Verifique sua internet.'),

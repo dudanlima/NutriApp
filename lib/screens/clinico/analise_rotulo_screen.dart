@@ -13,7 +13,7 @@ class AnaliseRotuloScreen extends StatefulWidget {
 }
 
 class _AnaliseRotuloScreenState extends State<AnaliseRotuloScreen> {
-  static const String _apiKey = 'AIzaSyCXjIWyFRqSwQomeHR60yl2qakb0KhOLwo';
+  static const String _apiKey = 'AIzaSyBPvcqgt3SRMEyEr5IUoGTFnHpQLIIdIcs';
 
   bool _processando = false;
   String _resultado = "";
@@ -52,12 +52,14 @@ class _AnaliseRotuloScreenState extends State<AnaliseRotuloScreen> {
         'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$_apiKey',
       );
 
-      // CORREÇÃO AQUI: Remove as quebras de linha invisíveis do base64 para evitar rejeição da API
-      final imagemBase64 = base64.encode(_fotoBytes!).replaceAll('\n', '').replaceAll('\r', '');
+      final imagemBase64 = base64.encode(_fotoBytes!).replaceAll(RegExp(r'[\r\n]'), '');
 
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
         body: jsonEncode({
           'contents': [
             {
@@ -86,13 +88,11 @@ class _AnaliseRotuloScreenState extends State<AnaliseRotuloScreen> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final texto =
-            data['candidates'][0]['content']['parts'][0]['text'] as String;
+        final texto = data['candidates'][0]['content']['parts'][0]['text'] as String;
         setState(() {
           _resultado = texto.replaceAll('*', '').trim();
         });
       } else {
-        debugPrint("Erro na API do Gemini (Rótulo): ${response.statusCode} - ${response.body}");
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Falha na análise. Tente novamente.'),
@@ -102,7 +102,6 @@ class _AnaliseRotuloScreenState extends State<AnaliseRotuloScreen> {
       }
     } catch (e) {
       if (!mounted) return;
-      debugPrint("Erro de conexão na análise do rótulo: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Erro de conexão. Verifique sua internet.'),
